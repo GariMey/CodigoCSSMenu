@@ -355,7 +355,7 @@
         }
 
         // ============================================================
-        // RENDERIZADORES - VERSIÓN SIMPLIFICADA
+        // RENDERIZADORES
         // ============================================================
 
         function renderHome(container) {
@@ -399,19 +399,73 @@
         }
 
         // ============================================================
-        // ACERCA DE - VERSIÓN VACÍA
+        // ACERCA DE - YA INTEGRADA
         // ============================================================
         function renderAbout(container) {
             container.innerHTML = `
-                <section class="hero" style="background:linear-gradient(135deg,#2c3e50,#1a252f);">
+                <section class="hero">
                     <h1>🐾 Acerca de Nosotros</h1>
-                    <p style="font-size:16px;opacity:0.8;">Contenido en construcción. Pronto más información.</p>
+                    <p>Desde 2015, en <strong>Patitas Felices</strong> rescatamos, cuidamos y buscamos un hogar amoroso para perros que han sido abandonados en situación de calle.</p>
                 </section>
-                <div style="background:#fff;padding:60px 40px;border-radius:16px;margin-top:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                    <span style="font-size:64px;display:block;margin-bottom:20px;">🏗️</span>
-                    <h3 style="color:#2c3e50;margin-bottom:15px;">Página en construcción</h3>
-                    <p style="color:#7f8c8d;max-width:500px;margin:0 auto;">Estamos trabajando en esta sección. Vuelve pronto para conocer más sobre nuestra historia y misión.</p>
-                    <button class="btn-donar" onclick="navigateTo('inicio')" style="margin-top:25px;background:#2c3e50;color:#fff;">Volver al inicio</button>
+
+                <section class="success-section" style="margin-top:30px;">
+                    <h2 class="section-title">Nuestra historia</h2>
+                    <p class="section-subtitle">Cómo empezó todo</p>
+                    <p style="max-width:750px;margin:0 auto;color:#7f8c8d;text-align:center;line-height:1.8;font-size:15px;">
+                        Patitas Felices nació de la iniciativa de un grupo de estudiantes que, al ver tantos perros abandonados en las calles, decidieron crear un espacio donde el rescate, el cuidado veterinario y la adopción responsable trabajaran de la mano. Desde entonces, cada perrito que pasa por nuestras manos recibe alimentación, atención médica y, sobre todo, mucho cariño mientras encuentra un hogar definitivo.
+                    </p>
+                </section>
+
+                <section class="help-section" style="margin-top:40px;">
+                    <h2 class="section-title">Nuestros valores</h2>
+                    <p class="section-subtitle">Lo que guía cada rescate que hacemos</p>
+                    <div class="help-grid">
+                        <div class="help-item">
+                            <span class="icon">❤️</span>
+                            <h4>Compromiso</h4>
+                            <p style="color:#7f8c8d;font-size:14px;margin-top:8px;">Acompañamos a cada perro desde el rescate hasta su nuevo hogar.</p>
+                        </div>
+                        <div class="help-item">
+                            <span class="icon">🛡️</span>
+                            <h4>Responsabilidad</h4>
+                            <p style="color:#7f8c8d;font-size:14px;margin-top:8px;">Promovemos la adopción consciente y el cuidado a largo plazo.</p>
+                        </div>
+                        <div class="help-item">
+                            <span class="icon">🤝</span>
+                            <h4>Comunidad</h4>
+                            <p style="color:#7f8c8d;font-size:14px;margin-top:8px;">Trabajamos junto a voluntarios y familias adoptantes de la zona.</p>
+                        </div>
+                        <div class="help-item">
+                            <span class="icon">🩺</span>
+                            <h4>Bienestar</h4>
+                            <p style="color:#7f8c8d;font-size:14px;margin-top:8px;">Cada perro recibe revisión veterinaria antes de ser adoptado.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section style="margin-top:40px;">
+                    <div style="background:linear-gradient(135deg,#e67e22,#f39c12);border-radius:16px;padding:40px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;text-align:center;color:#fff;box-shadow:0 8px 30px rgba(230,126,34,0.3);">
+                        <div>
+                            <span style="font-size:32px;font-weight:800;display:block;">120+</span>
+                            <p style="opacity:.9;font-size:14px;">Perros rescatados</p>
+                        </div>
+                        <div>
+                            <span style="font-size:32px;font-weight:800;display:block;">95</span>
+                            <p style="opacity:.9;font-size:14px;">Adopciones exitosas</p>
+                        </div>
+                        <div>
+                            <span style="font-size:32px;font-weight:800;display:block;">30</span>
+                            <p style="opacity:.9;font-size:14px;">Voluntarios activos</p>
+                        </div>
+                        <div>
+                            <span style="font-size:32px;font-weight:800;display:block;">4</span>
+                            <p style="opacity:.9;font-size:14px;">Años de labor</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div style="text-align:center;margin-top:30px;">
+                    <button class="btn-donar" onclick="navigateTo('adopciones')" style="background:#2c3e50;color:#fff;">Conocé a nuestros perritos →</button>
                 </div>
             `;
         }
