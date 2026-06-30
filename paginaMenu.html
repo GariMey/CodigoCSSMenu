@@ -1,108 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patitas Felices - Perros Rescatados</title>
-    <link rel="stylesheet" type="text/css" href="css/estilo-menu.css">
+	<meta charset="UTF-8">
+	<title>Menú CSS</title>
+	<link rel="stylesheet" type="text/css" href="css/estilo-menu.css">
 </head>
 <body>
 
-    <!-- NOTIFICACIÓN -->
-    <div id="notification"></div>
+	<ul class="menu">
+		<li><a href="#">Inicio</a></li>
 
-    <!-- MODAL DE ADOPCIÓN -->
-    <div class="modal-overlay" id="adoptionModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">✕</button>
-            <div class="dog-preview" id="modalDogPreview">
-                <img src="" alt="Perro" id="modalDogImage">
-                <div>
-                    <h3 id="modalDogName">Nombre</h3>
-                    <span class="edad" id="modalDogAge">🐾 Edad</span>
-                </div>
-            </div>
-            <h2>📋 Solicitud de Adopción</h2>
-            <p class="subtitle">Completa el formulario para iniciar el proceso de adopción. Tu solicitud será revisada por nuestro equipo.</p>
+		<li><a href="#">Acerca de</a></li>
 
-            <form class="modal-form" id="adoptionForm" onsubmit="return submitAdoption(event)">
-                <input type="hidden" id="adoptDogId" value="">
+		<li><a href="#">Servicios</a>
+			<ul>
+				<li><a href="#">Diseño Web</a></li>
+				<li><a href="#">Desarrollo Web</a></li>
+				<li><a href="#">Consultoría</a></li>
+				<li><a href="#">Mercadeo</a></li>
+			</ul>
+		</li>
 
-                <div class="form-group">
-                    <label>Nombre completo <span class="required">*</span></label>
-                    <input type="text" id="adoptFullName" placeholder="Ej: María González" required>
-                </div>
+		<li><a href="#quices">Quices</a></li>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Email <span class="required">*</span></label>
-                        <input type="email" id="adoptEmail" placeholder="correo@ejemplo.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Teléfono <span class="required">*</span></label>
-                        <input type="tel" id="adoptPhone" placeholder="+54 11 1234-5678" required>
-                    </div>
-                </div>
+		<li><a href="#">Galería</a></li>
 
-                <div class="form-group">
-                    <label>Dirección <span class="required">*</span></label>
-                    <input type="text" id="adoptAddress" placeholder="Calle, número, ciudad" required>
-                </div>
+		<li><a href="#">Contáctenos</a></li>
+	</ul>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Tipo de vivienda <span class="required">*</span></label>
-                        <select id="adoptHousing" required>
-                            <option value="">Selecciona...</option>
-                            <option value="casa">Casa con jardín</option>
-                            <option value="casa_patio">Casa con patio</option>
-                            <option value="departamento">Departamento</option>
-                            <option value="casa_campo">Casa en campo</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>¿Tienes otros animales? <span class="required">*</span></label>
-                        <select id="adoptOtherPets" required>
-                            <option value="">Selecciona...</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </div>
+	<section id="quices">
 
-                <div class="form-group">
-                    <label>¿Por qué quieres adoptar a este perro? <span class="required">*</span></label>
-                    <textarea id="adoptReason" placeholder="Cuéntanos por qué crees que serías un buen dueño para este perro..." required></textarea>
-                </div>
+		<h2>Quices del Grupo</h2>
 
-                <button type="submit" class="btn-submit" id="adoptSubmitBtn">🐾 Enviar solicitud</button>
-            </form>
-        </div>
-    </div>
+		<div class="integrante">
 
-    <!-- MENÚ DE NAVEGACIÓN -->
-    <ul class="menu">
-        <li class="logo-item"><a href="#">🐾 <span>Patitas</span>Felices</a></li>
-        <li><a href="#" data-page="inicio" class="active">Inicio</a></li>
-        <li><a href="#" data-page="acerca">Acerca de</a></li>
-        <li><a href="#" data-page="servicios">Servicios</a>
-            <ul>
-                <li><a href="#" data-page="adopciones">Adopciones</a></li>
-                <li><a href="#" data-page="rescates">Rescates</a></li>
-                <li><a href="#" data-page="voluntariado">Voluntariado</a></li>
-            </ul>
-        </li>
-        <li><a href="#" data-page="galeria">Galería</a></li>
-        <li><a href="#" data-page="contacto">Contacto</a></li>
-        <li style="margin-left:10px;">
-            <span style="color:#fff;font-size:13px;">🐾 Adopciones: <span id="adoption-counter" class="adoption-counter">12</span></span>
-        </li>
-    </ul>
+			<h3>Ziuliani Rodríguez Scott</h3>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <div id="main-content">
-        <!-- El contenido se carga dinámicamente con JavaScript -->
-    </div>
+			<div class="galeria">
+
+				<img src="img/ziuliani/Quiz 1.png" alt="Quiz 1">
+
+				<img src="img/ziuliani/Quiz 2.png" alt="Quiz 2">
+
+				<img src="img/ziuliani/Quiz 3.png" alt="Quiz 3">
+
+				<img src="img/ziuliani/Quiz 4.png" alt="Quiz 4">
+
+			</div>
 
     <!-- PIE DE PÁGINA -->
     <footer class="footer">
@@ -625,9 +571,9 @@
                     <div class="contact-container">
                         <div class="contact-info">
                             <h3>Información de contacto</h3>
-                            <p>📞 <strong>Teléfono:</strong> +506 8888 8888</p>
+                            <p>📞 <strong>Teléfono:</strong> +54 11 1234-5678</p>
                             <p>✉️ <strong>Email:</strong> info@patitasfelices.org</p>
-                            <p>📍 <strong>Dirección:</strong> Av.34, San José</p>
+                            <p>📍 <strong>Dirección:</strong> Av. Libertador 1234, Buenos Aires</p>
                             <p>🕐 <strong>Horario:</strong> Lunes a Viernes 9:00 - 18:00</p>
                             <div style="margin-top:20px;display:flex;gap:15px;flex-wrap:wrap;">
                                 <button class="btn-adoptar" onclick="showNotification('info','¡Pronto en redes sociales!')">📱 Instagram</button>
