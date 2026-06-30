@@ -1,767 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patitas Felices - Perros Rescatados</title>
-    <link rel="stylesheet" type="text/css" href="css/estilo-menu.css">
+	<meta charset="UTF-8">
+	<title>Menú CSS</title>
+	<link rel="stylesheet" type="text/css" href="css/estilo-menu.css">
 </head>
 <body>
 
-    <!-- NOTIFICACIÓN -->
-    <div id="notification"></div>
-
-    <!-- MODAL DE ADOPCIÓN -->
-    <div class="modal-overlay" id="adoptionModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">✕</button>
-            <div class="dog-preview" id="modalDogPreview">
-                <img src="" alt="Perro" id="modalDogImage">
-                <div>
-                    <h3 id="modalDogName">Nombre</h3>
-                    <span class="edad" id="modalDogAge">🐾 Edad</span>
-                </div>
-            </div>
-            <h2>📋 Solicitud de Adopción</h2>
-            <p class="subtitle">Completa el formulario para iniciar el proceso de adopción. Tu solicitud será revisada por nuestro equipo.</p>
-
-            <form class="modal-form" id="adoptionForm" onsubmit="return submitAdoption(event)">
-                <input type="hidden" id="adoptDogId" value="">
-
-                <div class="form-group">
-                    <label>Nombre completo <span class="required">*</span></label>
-                    <input type="text" id="adoptFullName" placeholder="Ej: María González" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Email <span class="required">*</span></label>
-                        <input type="email" id="adoptEmail" placeholder="correo@ejemplo.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Teléfono <span class="required">*</span></label>
-                        <input type="tel" id="adoptPhone" placeholder="+54 11 1234-5678" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Dirección <span class="required">*</span></label>
-                    <input type="text" id="adoptAddress" placeholder="Calle, número, ciudad" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Tipo de vivienda <span class="required">*</span></label>
-                        <select id="adoptHousing" required>
-                            <option value="">Selecciona...</option>
-                            <option value="casa">Casa con jardín</option>
-                            <option value="casa_patio">Casa con patio</option>
-                            <option value="departamento">Departamento</option>
-                            <option value="casa_campo">Casa en campo</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>¿Tienes otros animales? <span class="required">*</span></label>
-                        <select id="adoptOtherPets" required>
-                            <option value="">Selecciona...</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>¿Por qué quieres adoptar a este perro? <span class="required">*</span></label>
-                    <textarea id="adoptReason" placeholder="Cuéntanos por qué crees que serías un buen dueño para este perro..." required></textarea>
-                </div>
-
-                <button type="submit" class="btn-submit" id="adoptSubmitBtn">🐾 Enviar solicitud</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MENÚ DE NAVEGACIÓN -->
-    <ul class="menu">
-        <li class="logo-item"><a href="#">🐾 <span>Patitas</span>Felices</a></li>
-        <li><a href="#" data-page="inicio" class="active">Inicio</a></li>
-        <li><a href="#" data-page="acerca">Acerca de</a></li>
-        <li><a href="#" data-page="servicios">Servicios</a>
-            <ul>
-                <li><a href="#" data-page="adopciones">Adopciones</a></li>
-                <li><a href="#" data-page="rescates">Rescates</a></li>
-                <li><a href="#" data-page="voluntariado">Voluntariado</a></li>
-            </ul>
-        </li>
-        <li><a href="#" data-page="galeria">Galería</a></li>
-        <li><a href="#" data-page="contacto">Contacto</a></li>
-        <li style="margin-left:10px;">
-            <span style="color:#fff;font-size:13px;">🐾 Adopciones: <span id="adoption-counter" class="adoption-counter">12</span></span>
-        </li>
-    </ul>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <div id="main-content">
-        <!-- El contenido se carga dinámicamente con JavaScript -->
-    </div>
-
-    <!-- PIE DE PÁGINA -->
-    <footer class="footer">
-        <p>🐾 <strong>Patitas Felices</strong> — Rescatando y cambiando vidas desde 2015.</p>
-        <p>Síguenos en <a href="#" onclick="showNotification('info', '¡Pronto en redes sociales!')">Instagram</a> · <a href="#" onclick="showNotification('info', '¡Pronto en redes sociales!')">Facebook</a> · <a href="#" onclick="showNotification('info', '¡Pronto en redes sociales!')">Twitter</a></p>
-        <p style="margin-top:10px; font-size:12px; opacity:0.7;">&copy; 2026 Patitas Felices. Todos los derechos reservados.</p>
-    </footer>
-
-    <script>
-        // ============================================================
-        // DATOS
-        // ============================================================
-        const dogs = [
-            { id: 1, name: 'Bruno', age: '2 años', description: 'Juguetón y cariñoso. Le encanta salir a pasear y dormir al sol.', image: 'https://place.dog/300/200?id=1', adopted: false, adoptionStatus: null },
-            { id: 2, name: 'Luna', age: '1 año', description: 'Dulce y tranquila. Ideal para familias con niños o personas mayores.', image: 'https://place.dog/300/200?id=2', adopted: false, adoptionStatus: null },
-            { id: 3, name: 'Max', age: '3 años', description: 'Energético y leal. Busca un dueño activo que disfrute del aire libre.', image: 'https://place.dog/300/200?id=3', adopted: false, adoptionStatus: null },
-            { id: 4, name: 'Coco', age: '4 meses', description: 'Cachorro juguetón y muy curioso. Será el mejor amigo de tu familia.', image: 'https://place.dog/300/200?id=4', adopted: false, adoptionStatus: null },
-            { id: 5, name: 'Nala', age: '2 años', description: 'Tranquila y amorosa. Perfecta para hogares con espacio al aire libre.', image: 'https://place.dog/300/200?id=5', adopted: false, adoptionStatus: null },
-            { id: 6, name: 'Rocky', age: '5 años', description: 'Sabio y protector. Un compañero leal para toda la vida.', image: 'https://place.dog/300/200?id=6', adopted: false, adoptionStatus: null },
-        ];
-
-        let adoptionCount = 12;
-        let pendingAdoptions = [];
-        let adoptionIdCounter = 1;
-
-        // Cargar adopciones pendientes desde localStorage si existen
-        function loadPendingAdoptions() {
-            const saved = localStorage.getItem('pendingAdoptions');
-            if (saved) {
-                try {
-                    pendingAdoptions = JSON.parse(saved);
-                    adoptionIdCounter = pendingAdoptions.length > 0 ? Math.max(...pendingAdoptions.map(a => a.id)) + 1 : 1;
-                } catch (e) {
-                    pendingAdoptions = [];
-                }
-            }
-        }
-
-        function savePendingAdoptions() {
-            localStorage.setItem('pendingAdoptions', JSON.stringify(pendingAdoptions));
-        }
-
-        loadPendingAdoptions();
-
-        // ============================================================
-        // FUNCIONES PRINCIPALES
-        // ============================================================
-
-        function showNotification(type, message) {
-            const notif = document.getElementById('notification');
-            notif.className = type;
-            notif.textContent = message;
-            notif.style.display = 'block';
-            clearTimeout(notif._timeout);
-            notif._timeout = setTimeout(() => {
-                notif.style.display = 'none';
-            }, 5000);
-        }
-
-        function updateCounter() {
-            document.getElementById('adoption-counter').textContent = adoptionCount;
-        }
-
-        // ============================================================
-        // MODAL DE ADOPCIÓN
-        // ============================================================
-
-        function openModal(dogId) {
-            const dog = dogs.find(d => d.id === dogId);
-            if (!dog) return;
-            if (dog.adopted) {
-                showNotification('warning', '⚠️ Este perro ya fue adoptado');
-                return;
-            }
-            if (dog.adoptionStatus === 'pending') {
-                showNotification('warning', '⏳ Este perro ya tiene una solicitud en revisión');
-                return;
-            }
-
-            const modal = document.getElementById('adoptionModal');
-            document.getElementById('adoptDogId').value = dogId;
-            document.getElementById('modalDogImage').src = dog.image;
-            document.getElementById('modalDogName').textContent = dog.name;
-            document.getElementById('modalDogAge').textContent = '🐾 ' + dog.age;
-
-            document.getElementById('adoptionForm').reset();
-            document.getElementById('adoptSubmitBtn').disabled = false;
-            document.getElementById('adoptSubmitBtn').textContent = '🐾 Enviar solicitud';
-
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('adoptionModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        document.getElementById('adoptionModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // ============================================================
-        // ENVÍO DE SOLICITUD DE ADOPCIÓN
-        // ============================================================
-
-        function submitAdoption(e) {
-            e.preventDefault();
-
-            const dogId = parseInt(document.getElementById('adoptDogId').value);
-            const dog = dogs.find(d => d.id === dogId);
-            if (!dog) return false;
-
-            const fullName = document.getElementById('adoptFullName').value.trim();
-            const email = document.getElementById('adoptEmail').value.trim();
-            const phone = document.getElementById('adoptPhone').value.trim();
-            const address = document.getElementById('adoptAddress').value.trim();
-            const housing = document.getElementById('adoptHousing').value;
-            const otherPets = document.getElementById('adoptOtherPets').value;
-            const reason = document.getElementById('adoptReason').value.trim();
-
-            if (!fullName || !email || !phone || !address || !housing || !otherPets || !reason) {
-                showNotification('error', '⚠️ Por favor, completa todos los campos');
-                return false;
-            }
-
-            if (!email.includes('@') || !email.includes('.')) {
-                showNotification('error', '⚠️ Por favor, ingresa un email válido');
-                return false;
-            }
-
-            const adoption = {
-                id: adoptionIdCounter++,
-                dogId: dog.id,
-                dogName: dog.name,
-                dogImage: dog.image,
-                applicant: fullName,
-                email: email,
-                phone: phone,
-                address: address,
-                housing: housing,
-                otherPets: otherPets,
-                reason: reason,
-                date: new Date().toLocaleDateString('es-ES'),
-                status: 'pending'
-            };
-
-            pendingAdoptions.push(adoption);
-            savePendingAdoptions();
-
-            dog.adoptionStatus = 'pending';
-
-            const submitBtn = document.getElementById('adoptSubmitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Enviando...';
-
-            showNotification('success', `✅ ¡Solicitud enviada! ${dog.name} está en revisión. Te contactaremos pronto.`);
-
-            setTimeout(() => {
-                closeModal();
-                const currentPage = document.querySelector('.menu > li > a.active');
-                if (currentPage && currentPage.dataset.page === 'adopciones') {
-                    renderAdoptions(document.getElementById('main-content'));
-                }
-            }, 1500);
-
-            return false;
-        }
-
-        // ============================================================
-        // REVISIÓN DE ADOPCIONES
-        // ============================================================
-
-        function reviewAdoption(adoptionId, action) {
-            const adoption = pendingAdoptions.find(a => a.id === adoptionId);
-            if (!adoption) return;
-
-            const dog = dogs.find(d => d.id === adoption.dogId);
-
-            if (action === 'approve') {
-                adoption.status = 'approved';
-                if (dog) {
-                    dog.adopted = true;
-                    dog.adoptionStatus = 'approved';
-                    adoptionCount++;
-                    updateCounter();
-                }
-                showNotification('success', `✅ Adopción aprobada para ${adoption.dogName}. ¡Felicidades a ${adoption.applicant}!`);
-            } else if (action === 'reject') {
-                adoption.status = 'rejected';
-                if (dog) {
-                    dog.adoptionStatus = 'rejected';
-                    setTimeout(() => {
-                        if (dog) {
-                            dog.adoptionStatus = null;
-                            savePendingAdoptions();
-                        }
-                    }, 5000);
-                }
-                showNotification('warning', `❌ Adopción rechazada para ${adoption.dogName}.`);
-            }
-
-            savePendingAdoptions();
-
-            const currentPage = document.querySelector('.menu > li > a.active');
-            if (currentPage && currentPage.dataset.page === 'adopciones') {
-                renderAdoptions(document.getElementById('main-content'));
-            }
-        }
-
-        // ============================================================
-        // NAVEGACIÓN SPA
-        // ============================================================
-
-        function navigateTo(page) {
-            document.querySelectorAll('.menu > li > a[data-page]').forEach(el => {
-                el.classList.remove('active');
-                if (el.dataset.page === page) el.classList.add('active');
-            });
-
-            const content = document.getElementById('main-content');
-            switch(page) {
-                case 'inicio':
-                    renderHome(content);
-                    break;
-                case 'acerca':
-                    renderAbout(content);
-                    break;
-                case 'servicios':
-                    renderServices(content);
-                    break;
-                case 'adopciones':
-                    renderAdoptions(content);
-                    break;
-                case 'rescates':
-                    renderRescues(content);
-                    break;
-                case 'voluntariado':
-                    renderVolunteer(content);
-                    break;
-                case 'galeria':
-                    renderGallery(content);
-                    break;
-                case 'contacto':
-                    renderContact(content);
-                    break;
-                default:
-                    renderHome(content);
-            }
-        }
-
-        // ============================================================
-        // RENDERIZADORES - VERSIÓN SIMPLIFICADA
-        // ============================================================
-
-        function renderHome(container) {
-            container.innerHTML = `
-                <section class="hero">
-                    <h1>🐶 Dales una segunda oportunidad</h1>
-                    <p>En <strong>Patitas Felices</strong> rescatamos, cuidamos y buscamos hogares amorosos para perros que han sido abandonados. Cada adopción cambia una vida.</p>
-                    <button class="btn-donar" onclick="navigateTo('adopciones')">❤️ Ver perros en adopción</button>
-                </section>
-
-                <section class="dogs-section" style="margin-top:40px;">
-                    <h2 class="section-title">🐕 Perros destacados</h2>
-                    <p class="section-subtitle">Ellos están esperando por ti. Conócelos y dales un hogar.</p>
-                    <div class="dogs-grid">
-                        ${dogs.filter(d => !d.adopted).slice(0, 4).map(dog => createDogCard(dog)).join('')}
-                    </div>
-                    <div style="text-align:center;margin-top:30px;">
-                        <button class="btn-donar" onclick="navigateTo('adopciones')" style="background:#2c3e50;color:#fff;">Ver todos los perros →</button>
-                    </div>
-                </section>
-
-                <section class="success-section" style="margin-top:40px;">
-                    <h2 class="section-title">🌟 Historias de éxito</h2>
-                    <p class="section-subtitle">Mira cómo estos perros encontraron un hogar feliz.</p>
-                    <div class="success-grid">
-                        ${[
-                            { title: '🐕 Toby encontró su hogar', text: 'Toby llegó asustado y desnutrido. Hoy vive con una familia que lo ama.' },
-                            { title: '🐕 Nina y su nueva familia', text: 'Nina fue rescatada de la calle. Ahora vive con una familia que le da todo el cariño.' },
-                            { title: '🐕 Rocky, un campeón', text: 'Rocky superó una enfermedad y ahora es un perro feliz y saludable.' },
-                            { title: '🐕 Bella, la viajera', text: 'Bella viajó 500km para encontrar su hogar definitivo.' },
-                        ].map(story => `
-                            <div class="success-card">
-                                <h4>${story.title}</h4>
-                                <p>${story.text}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `;
-            attachAdoptionEvents();
-        }
-
-        // ============================================================
-        // ACERCA DE - VERSIÓN VACÍA
-        // ============================================================
-        function renderAbout(container) {
-            container.innerHTML = `
-                <section class="hero" style="background:linear-gradient(135deg,#2c3e50,#1a252f);">
-                    <h1>🐾 Acerca de Nosotros</h1>
-                    <p style="font-size:16px;opacity:0.8;">Contenido en construcción. Pronto más información.</p>
-                </section>
-                <div style="background:#fff;padding:60px 40px;border-radius:16px;margin-top:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                    <span style="font-size:64px;display:block;margin-bottom:20px;">🏗️</span>
-                    <h3 style="color:#2c3e50;margin-bottom:15px;">Página en construcción</h3>
-                    <p style="color:#7f8c8d;max-width:500px;margin:0 auto;">Estamos trabajando en esta sección. Vuelve pronto para conocer más sobre nuestra historia y misión.</p>
-                    <button class="btn-donar" onclick="navigateTo('inicio')" style="margin-top:25px;background:#2c3e50;color:#fff;">Volver al inicio</button>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // SERVICIOS - VERSIÓN VACÍA
-        // ============================================================
-        function renderServices(container) {
-            container.innerHTML = `
-                <section class="hero" style="background:linear-gradient(135deg,#27ae60,#2ecc71);">
-                    <h1>🛠️ Nuestros Servicios</h1>
-                    <p style="font-size:16px;opacity:0.8;">Contenido en construcción. Pronto más información.</p>
-                </section>
-                <div style="background:#fff;padding:60px 40px;border-radius:16px;margin-top:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                    <span style="font-size:64px;display:block;margin-bottom:20px;">🚧</span>
-                    <h3 style="color:#2c3e50;margin-bottom:15px;">Página en construcción</h3>
-                    <p style="color:#7f8c8d;max-width:500px;margin:0 auto;">Estamos preparando información detallada sobre todos nuestros servicios. Vuelve pronto.</p>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin-top:30px;max-width:600px;margin-left:auto;margin-right:auto;">
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;">
-                            <span style="font-size:30px;">🏠</span>
-                            <p style="margin-top:8px;font-size:14px;color:#7f8c8d;">Adopciones</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;">
-                            <span style="font-size:30px;">🚑</span>
-                            <p style="margin-top:8px;font-size:14px;color:#7f8c8d;">Rescates</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;">
-                            <span style="font-size:30px;">🧑‍🤝‍🧑</span>
-                            <p style="margin-top:8px;font-size:14px;color:#7f8c8d;">Voluntariado</p>
-                        </div>
-                    </div>
-                    <button class="btn-donar" onclick="navigateTo('inicio')" style="margin-top:25px;background:#27ae60;color:#fff;">Volver al inicio</button>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // ADOPCIONES - COMPLETA
-        // ============================================================
-        function renderAdoptions(container) {
-            const availableDogs = dogs.filter(d => !d.adopted);
-            const pendingForDogs = pendingAdoptions.filter(a => a.status === 'pending');
-
-            container.innerHTML = `
-                <section class="dogs-section">
-                    <h2 class="section-title">🐕 Perros en adopción</h2>
-                    <p class="section-subtitle">${availableDogs.length} perros disponibles · ${pendingForDogs.length} solicitudes en revisión</p>
-                    <div class="dogs-grid">
-                        ${dogs.map(dog => createDogCard(dog)).join('')}
-                    </div>
-                </section>
-
-                ${pendingAdoptions.length > 0 ? `
-                    <section class="pending-section">
-                        <h3 style="color:#2c3e50;display:flex;align-items:center;gap:10px;">
-                            📋 Solicitudes de adopción pendientes
-                            <span style="background:#f39c12;color:#fff;padding:2px 12px;border-radius:20px;font-size:14px;">${pendingAdoptions.filter(a => a.status === 'pending').length}</span>
-                        </h3>
-                        <p style="color:#7f8c8d;font-size:14px;margin-top:5px;">Revisa y aprueba o rechaza las solicitudes de adopción.</p>
-                        <table class="pending-table">
-                            <thead>
-                                <tr>
-                                    <th>Perro</th>
-                                    <th>Solicitante</th>
-                                    <th>Email</th>
-                                    <th>Fecha</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${pendingAdoptions.map(a => `
-                                    <tr>
-                                        <td><strong>${a.dogName}</strong></td>
-                                        <td>${a.applicant}</td>
-                                        <td>${a.email}</td>
-                                        <td>${a.date}</td>
-                                        <td>
-                                            <span class="status-${a.status}">
-                                                ${a.status === 'pending' ? '⏳ Pendiente' : 
-                                                  a.status === 'approved' ? '✅ Aprobada' : '❌ Rechazada'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            ${a.status === 'pending' ? `
-                                                <button class="btn-review approve" onclick="reviewAdoption(${a.id}, 'approve')">✓ Aprobar</button>
-                                                <button class="btn-review reject" onclick="reviewAdoption(${a.id}, 'reject')">✕ Rechazar</button>
-                                            ` : `
-                                                <span style="color:#7f8c8d;font-size:12px;">${a.status === 'approved' ? '✅ Completada' : '❌ Rechazada'}</span>
-                                            `}
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </section>
-                ` : ''}
-            `;
-            attachAdoptionEvents();
-        }
-
-        // ============================================================
-        // RESCATES - COMPLETA
-        // ============================================================
-        function renderRescues(container) {
-            container.innerHTML = `
-                <section class="hero" style="background:linear-gradient(135deg,#e74c3c,#c0392b);">
-                    <h1>🚑 Rescates Recientes</h1>
-                    <p>Conoce nuestras últimas intervenciones y cómo puedes ayudar.</p>
-                </section>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;margin-top:30px;">
-                    ${[
-                        { title: 'Rescate en zona rural', desc: '5 cachorros encontrados en condiciones precarias. Ya están recibiendo atención médica.', date: 'Hace 2 días' },
-                        { title: 'Operativo en la ciudad', desc: 'Rescatamos a 3 perros que vivían en la calle. Están en proceso de rehabilitación.', date: 'Hace 5 días' },
-                        { title: 'Caso de maltrato', desc: 'Intervención exitosa. El perro está siendo cuidado y se encuentra estable.', date: 'Hace 1 semana' },
-                    ].map(r => `
-                        <div style="background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.06);">
-                            <h4 style="color:#2c3e50;">${r.title}</h4>
-                            <p style="color:#7f8c8d;margin:10px 0;">${r.desc}</p>
-                            <small style="color:#e67e22;">📅 ${r.date}</small>
-                            <br><button class="btn-adoptar" style="margin-top:12px;padding:6px 20px;font-size:12px;" onclick="showNotification('info','Gracias por tu interés en ayudar')">Quiero ayudar</button>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // VOLUNTARIADO - COMPLETA
-        // ============================================================
-        function renderVolunteer(container) {
-            container.innerHTML = `
-                <section class="hero" style="background:linear-gradient(135deg,#8e44ad,#9b59b6);">
-                    <h1>🧑‍🤝‍🧑 Sé Voluntario</h1>
-                    <p>Tu tiempo y dedicación pueden cambiar la vida de muchos perros.</p>
-                </section>
-                <div style="background:#fff;padding:40px;border-radius:16px;margin-top:30px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                    <h3 style="color:#2c3e50;margin-bottom:20px;">Formas de ser voluntario</h3>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;text-align:center;">
-                            <span style="font-size:30px;">🐕</span>
-                            <h4>Paseador</h4>
-                            <p style="color:#7f8c8d;font-size:14px;">Saca a pasear a los perros y dales ejercicio.</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;text-align:center;">
-                            <span style="font-size:30px;">🏥</span>
-                            <h4>Asistente veterinario</h4>
-                            <p style="color:#7f8c8d;font-size:14px;">Ayuda en revisiones y cuidados médicos.</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;text-align:center;">
-                            <span style="font-size:30px;">📸</span>
-                            <h4>Fotógrafo</h4>
-                            <p style="color:#7f8c8d;font-size:14px;">Toma fotos profesionales para promocionar adopciones.</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;text-align:center;">
-                            <span style="font-size:30px;">📢</span>
-                            <h4>Community Manager</h4>
-                            <p style="color:#7f8c8d;font-size:14px;">Gestiona redes sociales y difunde nuestra causa.</p>
-                        </div>
-                    </div>
-                    <div style="text-align:center;margin-top:30px;">
-                        <button class="btn-donar" onclick="showNotification('success','¡Gracias por querer ser voluntario! Te contactaremos pronto.')" style="background:#8e44ad;color:#fff;">Inscribirse como voluntario</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // GALERÍA - VERSIÓN VACÍA
-        // ============================================================
-        function renderGallery(container) {
-            container.innerHTML = `
-                <section class="gallery-section">
-                    <h2 class="section-title">📸 Galería</h2>
-                    <p class="section-subtitle" style="opacity:0.7;">Contenido en construcción. Pronto más imágenes.</p>
-                    
-                    <div style="background:#fff;padding:60px 40px;border-radius:16px;margin-top:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                        <span style="font-size:64px;display:block;margin-bottom:20px;">🖼️</span>
-                        <h3 style="color:#2c3e50;margin-bottom:15px;">Galería en construcción</h3>
-                        <p style="color:#7f8c8d;max-width:500px;margin:0 auto;">Estamos seleccionando las mejores fotos de nuestros perros rescatados. Vuelve pronto para verlas.</p>
-                        
-                        <div class="gallery-filters" style="margin-top:25px;">
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">📷 Todos</button>
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">🐕 Rescates</button>
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">🏠 Adopciones</button>
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">🎉 Eventos</button>
-                        </div>
-                        
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:20px;">
-                            ${[1,2,3,4,5,6].map(i => `
-                                <div style="background:#ecf0f1;border-radius:12px;height:150px;display:flex;align-items:center;justify-content:center;color:#bdc3c7;font-size:14px;border:2px dashed #bdc3c7;">
-                                    📸 Imagen ${i}
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <button class="btn-donar" onclick="navigateTo('inicio')" style="margin-top:25px;background:#2c3e50;color:#fff;">Volver al inicio</button>
-                    </div>
-                </section>
-            `;
-        }
-
-        // ============================================================
-        // CONTACTO - COMPLETA
-        // ============================================================
-        function renderContact(container) {
-            container.innerHTML = `
-                <section class="contact-section">
-                    <h2 class="section-title">📬 Contacto</h2>
-                    <p class="section-subtitle">¿Preguntas? ¿Quieres adoptar? Escríbenos y te responderemos pronto.</p>
-                    <div class="contact-container">
-                        <div class="contact-info">
-                            <h3>Información de contacto</h3>
-                            <p>📞 <strong>Teléfono:</strong> +54 11 1234-5678</p>
-                            <p>✉️ <strong>Email:</strong> info@patitasfelices.org</p>
-                            <p>📍 <strong>Dirección:</strong> Av. Libertador 1234, Buenos Aires</p>
-                            <p>🕐 <strong>Horario:</strong> Lunes a Viernes 9:00 - 18:00</p>
-                            <div style="margin-top:20px;display:flex;gap:15px;flex-wrap:wrap;">
-                                <button class="btn-adoptar" onclick="showNotification('info','¡Pronto en redes sociales!')">📱 Instagram</button>
-                                <button class="btn-adoptar" onclick="showNotification('info','¡Pronto en redes sociales!')">📘 Facebook</button>
-                                <button class="btn-adoptar" onclick="showNotification('info','¡Pronto en redes sociales!')">🐦 Twitter</button>
-                            </div>
-                        </div>
-                        <form class="contact-form" id="contact-form" onsubmit="return handleContactForm(event)">
-                            <input type="text" placeholder="Tu nombre" required>
-                            <input type="email" placeholder="Tu email" required>
-                            <input type="text" placeholder="Asunto" required>
-                            <textarea placeholder="Escribe tu mensaje..." required></textarea>
-                            <button type="submit">📨 Enviar mensaje</button>
-                        </form>
-                    </div>
-                </section>
-            `;
-        }
-
-        // ============================================================
-        // COMPONENTES REUTILIZABLES
-        // ============================================================
-
-        function createDogCard(dog) {
-            let statusBadge = '';
-            let buttonText = 'Adoptar';
-            let buttonClass = 'btn-adoptar';
-            let buttonDisabled = '';
-
-            if (dog.adopted) {
-                buttonText = '🐾 ¡Adoptado!';
-                buttonClass += ' adoptado';
-                buttonDisabled = 'disabled';
-            } else if (dog.adoptionStatus === 'pending') {
-                buttonText = '⏳ En revisión';
-                buttonClass += ' pending';
-                buttonDisabled = 'disabled';
-                statusBadge = `<span class="status-badge pending">⏳ En revisión</span>`;
-            } else if (dog.adoptionStatus === 'rejected') {
-                buttonText = '🔄 Disponible';
-                buttonClass += '';
-            }
-
-            return `
-                <div class="dog-card" data-id="${dog.id}">
-                    ${statusBadge}
-                    <img src="${dog.image}" alt="${dog.name}">
-                    <div class="info">
-                        <h3>${dog.name}</h3>
-                        <span class="edad">🐾 ${dog.age}</span>
-                        <p>${dog.description}</p>
-                        <button class="${buttonClass}" data-id="${dog.id}" ${buttonDisabled}>
-                            ${buttonText}
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function attachAdoptionEvents() {
-            document.querySelectorAll('.btn-adoptar:not(.adoptado):not(.pending)').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const dogId = parseInt(this.dataset.id);
-                    const dog = dogs.find(d => d.id === dogId);
-                    if (dog && !dog.adopted && dog.adoptionStatus !== 'pending') {
-                        openModal(dogId);
-                    }
-                });
-            });
-        }
-
-        // ============================================================
-        // MANEJADORES DE EVENTOS
-        // ============================================================
-
-        function handleContactForm(e) {
-            e.preventDefault();
-            const form = e.target;
-            const name = form.querySelector('input[placeholder="Tu nombre"]').value;
-            const email = form.querySelector('input[placeholder="Tu email"]').value;
-            const subject = form.querySelector('input[placeholder="Asunto"]').value;
-            const message = form.querySelector('textarea').value;
-
-            if (!name || !email || !subject || !message) {
-                showNotification('error', '⚠️ Por favor, completa todos los campos');
-                return false;
-            }
-
-            showNotification('success', `✅ ¡Gracias ${name}! Tu mensaje ha sido enviado. Te contactaremos pronto.`);
-            form.reset();
-            return false;
-        }
-
-        // ============================================================
-        // NAVEGACIÓN POR MENÚ
-        // ============================================================
-
-        document.querySelectorAll('.menu > li > a[data-page]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const page = this.dataset.page;
-                navigateTo(page);
-                if (window.innerWidth <= 768) {
-                    document.querySelectorAll('.menu li > ul').forEach(ul => ul.style.display = 'none');
-                }
-            });
-        });
-
-        document.querySelectorAll('.menu > li').forEach(li => {
-            const link = li.querySelector('a[data-page]');
-            const submenu = li.querySelector('ul');
-            if (submenu && window.innerWidth <= 768) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const isOpen = submenu.style.display === 'block';
-                    document.querySelectorAll('.menu li > ul').forEach(ul => ul.style.display = 'none');
-                    submenu.style.display = isOpen ? 'none' : 'block';
-                });
-            }
-        });
-
-        // ============================================================
-        // INICIALIZACIÓN
-        // ============================================================
-
-        navigateTo('inicio');
-        updateCounter();
-
-        setTimeout(() => {
-            showNotification('info', '🐾 ¡Bienvenido a Patitas Felices! Adopta y cambia una vida.');
-        }, 500);
-
-        console.log('🐾 Patitas Felices cargado exitosamente');
-    </script>
+	<ul class="menu">
+		<li><a href="#">Inicio</a></li>
+
+		<li><a href="#">Acerca de</a></li>
+
+		<li><a href="#">Servicios</a>
+			<ul>
+				<li><a href="#">Diseño Web</a></li>
+				<li><a href="#">Desarrollo Web</a></li>
+				<li><a href="#">Consultoría</a></li>
+				<li><a href="#">Mercadeo</a></li>
+			</ul>
+		</li>
+
+		<li><a href="#quices">Quices</a></li>
+
+		<li><a href="#">Galería</a></li>
+
+		<li><a href="#">Contáctenos</a></li>
+	</ul>
+
+	<section id="quices">
+
+		<h2>Quices del Grupo</h2>
+
+		<div class="integrante">
+
+			<h3>Ziuliani Rodríguez Scott</h3>
+
+			<div class="galeria">
+
+				<img src="img/ziuliani/Quiz 1.png" alt="Quiz 1">
+
+				<img src="img/ziuliani/Quiz 2.png" alt="Quiz 2">
+
+				<img src="img/ziuliani/Quiz 3.png" alt="Quiz 3">
+
+				<img src="img/ziuliani/Quiz 4.png" alt="Quiz 4">
+
+			</div>
+
+		</div>
+
+		<!-- AQUÍ AGUSTÍN AGREGARÁ SUS QUIZZES -->
+
+		<!--
+		<div class="integrante">
+
+			<h3>Agustín</h3>
+
+			<div class="galeria">
+
+				<img src="img/agustin/Quiz 1.png">
+				<img src="img/agustin/Quiz 2.png">
+				<img src="img/agustin/Quiz 3.png">
+				<img src="img/agustin/Quiz 4.png">
+
+			</div>
+
+		</div>
+		-->
+
+		<!-- AQUÍ MELANY AGREGARÁ SUS QUIZZES -->
+
+		<!--
+		<div class="integrante">
+
+			<h3>Melany</h3>
+
+			<div class="galeria">
+
+				<img src="img/melany/Quiz 1.png">
+				<img src="img/melany/Quiz 2.png">
+				<img src="img/melany/Quiz 3.png">
+				<img src="img/melany/Quiz 4.png">
+
+			</div>
+
+		</div>
+		-->
+
+	</section>
+
 </body>
 </html>
