@@ -85,13 +85,7 @@
         <li class="logo-item"><a href="#">🐾 <span>Patitas</span>Felices</a></li>
         <li><a href="#" data-page="inicio" class="active">Inicio</a></li>
         <li><a href="#" data-page="acerca">Acerca de</a></li>
-        <li><a href="#" data-page="servicios">Servicios</a>
-            <ul>
-                <li><a href="#" data-page="adopciones">Adopciones</a></li>
-                <li><a href="#" data-page="rescates">Rescates</a></li>
-                <li><a href="#" data-page="voluntariado">Voluntariado</a></li>
-            </ul>
-        </li>
+        <li><a href="#" data-page="servicios">Servicios</a></li>
         <li><a href="#" data-page="galeria">Galería</a></li>
         <li><a href="#" data-page="contacto">Contacto</a></li>
         <li style="margin-left:10px;">
@@ -352,6 +346,7 @@
                 default:
                     renderHome(content);
             }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // ============================================================
@@ -471,34 +466,72 @@
         }
 
         // ============================================================
-        // SERVICIOS - VERSIÓN VACÍA
+        // SERVICIOS - VERSIÓN FUNCIONAL (combina Adopciones, Rescates y Voluntariado)
         // ============================================================
         function renderServices(container) {
+            const availableDogs = dogs.filter(d => !d.adopted).length;
+
+            const services = [
+                {
+                    icon: '🏠',
+                    title: 'Adopciones',
+                    desc: `Encuentra a tu nuevo mejor amigo. Actualmente tenemos ${availableDogs} perros esperando un hogar.`,
+                    stat: `${availableDogs} disponibles`,
+                    color: '#27ae60',
+                    page: 'adopciones',
+                    cta: 'Ver perros en adopción'
+                },
+                {
+                    icon: '🚑',
+                    title: 'Rescates',
+                    desc: 'Intervenimos en casos de maltrato y abandono. Conoce nuestros operativos más recientes.',
+                    stat: '3 rescates recientes',
+                    color: '#e74c3c',
+                    page: 'rescates',
+                    cta: 'Ver rescates recientes'
+                },
+                {
+                    icon: '🧑\u200d🤝\u200d🧑',
+                    title: 'Voluntariado',
+                    desc: 'Suma tu tiempo y dedicación. Hay varias formas de ayudar, desde pasear perros hasta gestionar redes.',
+                    stat: '4 formas de ayudar',
+                    color: '#8e44ad',
+                    page: 'voluntariado',
+                    cta: 'Quiero ser voluntario'
+                },
+            ];
+
             container.innerHTML = `
                 <section class="hero" style="background:linear-gradient(135deg,#27ae60,#2ecc71);">
                     <h1>🛠️ Nuestros Servicios</h1>
-                    <p style="font-size:16px;opacity:0.8;">Contenido en construcción. Pronto más información.</p>
+                    <p>Estas son las formas en que trabajamos por los perros rescatados. Elige una opción para conocer más.</p>
                 </section>
-                <div style="background:#fff;padding:60px 40px;border-radius:16px;margin-top:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                    <span style="font-size:64px;display:block;margin-bottom:20px;">🚧</span>
-                    <h3 style="color:#2c3e50;margin-bottom:15px;">Página en construcción</h3>
-                    <p style="color:#7f8c8d;max-width:500px;margin:0 auto;">Estamos preparando información detallada sobre todos nuestros servicios. Vuelve pronto.</p>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin-top:30px;max-width:600px;margin-left:auto;margin-right:auto;">
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;">
-                            <span style="font-size:30px;">🏠</span>
-                            <p style="margin-top:8px;font-size:14px;color:#7f8c8d;">Adopciones</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;">
-                            <span style="font-size:30px;">🚑</span>
-                            <p style="margin-top:8px;font-size:14px;color:#7f8c8d;">Rescates</p>
-                        </div>
-                        <div style="padding:20px;background:#f9f6f2;border-radius:10px;">
-                            <span style="font-size:30px;">🧑‍🤝‍🧑</span>
-                            <p style="margin-top:8px;font-size:14px;color:#7f8c8d;">Voluntariado</p>
-                        </div>
+
+                <section style="margin-top:30px;">
+                    <h2 class="section-title">¿Cómo quieres ayudar hoy?</h2>
+                    <p class="section-subtitle">Cada servicio te lleva directo a la sección correspondiente.</p>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;margin-top:25px;">
+                        ${services.map(s => `
+                            <div style="background:#fff;border-radius:14px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border-top:5px solid ${s.color};cursor:pointer;transition:transform 0.2s;"
+                                 onclick="navigateTo('${s.page}')"
+                                 onmouseover="this.style.transform='translateY(-4px)'"
+                                 onmouseout="this.style.transform='translateY(0)'">
+                                <span style="font-size:42px;display:block;margin-bottom:12px;">${s.icon}</span>
+                                <h3 style="color:#2c3e50;margin-bottom:8px;">${s.title}</h3>
+                                <p style="color:#7f8c8d;font-size:14px;min-height:60px;">${s.desc}</p>
+                                <span style="display:inline-block;background:${s.color}1a;color:${s.color};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin:10px 0;">${s.stat}</span>
+                                <br>
+                                <button class="btn-donar" style="background:${s.color};color:#fff;margin-top:10px;width:100%;" onclick="event.stopPropagation(); navigateTo('${s.page}')">${s.cta} →</button>
+                            </div>
+                        `).join('')}
                     </div>
-                    <button class="btn-donar" onclick="navigateTo('inicio')" style="margin-top:25px;background:#27ae60;color:#fff;">Volver al inicio</button>
-                </div>
+                </section>
+
+                <section style="margin-top:40px;background:#fff;padding:40px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);text-align:center;">
+                    <h3 style="color:#2c3e50;margin-bottom:15px;">¿No sabes por dónde empezar?</h3>
+                    <p style="color:#7f8c8d;max-width:500px;margin:0 auto 20px;">Si quieres dar un hogar, revisa Adopciones. Si quieres reportar un caso, ve a Rescates. Si tienes tiempo libre, únete como Voluntario.</p>
+                    <button class="btn-donar" onclick="navigateTo('contacto')" style="background:#2c3e50;color:#fff;">📬 Contáctanos</button>
+                </section>
             `;
         }
 
@@ -590,6 +623,9 @@
                         </div>
                     `).join('')}
                 </div>
+                <div style="text-align:center;margin-top:30px;">
+                    <button class="btn-donar" onclick="navigateTo('servicios')" style="background:#2c3e50;color:#fff;">← Volver a Servicios</button>
+                </div>
             `;
         }
 
@@ -629,6 +665,9 @@
                     <div style="text-align:center;margin-top:30px;">
                         <button class="btn-donar" onclick="showNotification('success','¡Gracias por querer ser voluntario! Te contactaremos pronto.')" style="background:#8e44ad;color:#fff;">Inscribirse como voluntario</button>
                     </div>
+                </div>
+                <div style="text-align:center;margin-top:20px;">
+                    <button class="btn-donar" onclick="navigateTo('servicios')" style="background:#2c3e50;color:#fff;">← Volver a Servicios</button>
                 </div>
             `;
         }
