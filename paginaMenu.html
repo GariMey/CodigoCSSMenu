@@ -80,12 +80,19 @@
         </div>
     </div>
 
-    <!-- MENÚ DE NAVEGACIÓN -->
+    <!-- MENÚ DE NAVEGACIÓN ACTUALIZADO CON EVIDENCIAS -->
     <ul class="menu">
         <li class="logo-item"><a href="#">🐾 <span>Patitas</span>Felices</a></li>
         <li><a href="#" data-page="inicio" class="active">Inicio</a></li>
         <li><a href="#" data-page="acerca">Acerca de</a></li>
         <li><a href="#" data-page="servicios">Servicios</a></li>
+        <li><a href="#" data-page="evidencias">Evidencias</a>
+            <ul>
+                <li><a href="#" data-page="evidencias-melany" onclick="event.preventDefault(); navigateTo('evidencias-melany');">Melany</a></li>
+                <li><a href="#" data-page="evidencias-agustin" onclick="event.preventDefault(); navigateTo('evidencias-agustin');">Agustín</a></li>
+                <li><a href="#" data-page="evidencias-zuiliani" onclick="event.preventDefault(); navigateTo('evidencias-zuiliani');">Zuiliani</a></li>
+            </ul>
+        </li>
         <li><a href="#" data-page="galeria">Galería</a></li>
         <li><a href="#" data-page="contacto">Contacto</a></li>
         <li style="margin-left:10px;">
@@ -122,24 +129,42 @@
         let pendingAdoptions = [];
         let adoptionIdCounter = 1;
 
-        // Cargar adopciones pendientes desde localStorage si existen
-        function loadPendingAdoptions() {
-            const saved = localStorage.getItem('pendingAdoptions');
+        // ============================================================
+        // EVIDENCIAS - Datos
+        // ============================================================
+        const estudiantes = ['Melany', 'Agustín', 'Zuiliani'];
+
+        function loadEvidencias() {
+            const saved = localStorage.getItem('evidencias');
             if (saved) {
                 try {
-                    pendingAdoptions = JSON.parse(saved);
-                    adoptionIdCounter = pendingAdoptions.length > 0 ? Math.max(...pendingAdoptions.map(a => a.id)) + 1 : 1;
+                    return JSON.parse(saved);
                 } catch (e) {
-                    pendingAdoptions = [];
+                    return {};
                 }
             }
+            const initialData = {
+                'Melany': [
+                    { id: 1, nombre: 'Melany', imagen: 'https://place.dog/300/200?id=10', fecha: '2026-06-28' },
+                    { id: 2, nombre: 'Melany', imagen: 'https://place.dog/300/200?id=11', fecha: '2026-06-29' }
+                ],
+                'Agustín': [
+                    { id: 3, nombre: 'Agustín', imagen: 'https://place.dog/300/200?id=12', fecha: '2026-06-28' }
+                ],
+                'Zuiliani': [
+                    { id: 4, nombre: 'Zuiliani', imagen: 'https://place.dog/300/200?id=13', fecha: '2026-06-27' }
+                ]
+            };
+            localStorage.setItem('evidencias', JSON.stringify(initialData));
+            return initialData;
         }
 
-        function savePendingAdoptions() {
-            localStorage.setItem('pendingAdoptions', JSON.stringify(pendingAdoptions));
-        }
+        let evidencias = loadEvidencias();
+        let evidenciaIdCounter = 4;
 
-        loadPendingAdoptions();
+        function saveEvidencias() {
+            localStorage.setItem('evidencias', JSON.stringify(evidencias));
+        }
 
         // ============================================================
         // FUNCIONES PRINCIPALES
@@ -159,6 +184,24 @@
         function updateCounter() {
             document.getElementById('adoption-counter').textContent = adoptionCount;
         }
+
+        function loadPendingAdoptions() {
+            const saved = localStorage.getItem('pendingAdoptions');
+            if (saved) {
+                try {
+                    pendingAdoptions = JSON.parse(saved);
+                    adoptionIdCounter = pendingAdoptions.length > 0 ? Math.max(...pendingAdoptions.map(a => a.id)) + 1 : 1;
+                } catch (e) {
+                    pendingAdoptions = [];
+                }
+            }
+        }
+
+        function savePendingAdoptions() {
+            localStorage.setItem('pendingAdoptions', JSON.stringify(pendingAdoptions));
+        }
+
+        loadPendingAdoptions();
 
         // ============================================================
         // MODAL DE ADOPCIÓN
@@ -308,16 +351,40 @@
         }
 
         // ============================================================
-        // NAVEGACIÓN SPA
+        // NAVEGACIÓN SPA (CORREGIDA)
         // ============================================================
 
         function navigateTo(page) {
+            console.log('Navegando a:', page);
+
+            // Actualizar clase activa en el menú
             document.querySelectorAll('.menu > li > a[data-page]').forEach(el => {
                 el.classList.remove('active');
-                if (el.dataset.page === page) el.classList.add('active');
+                // Si la página es una subpágina de evidencias, activar "Evidencias"
+                if (page.startsWith('evidencias-')) {
+                    const parentEvidencias = document.querySelector('.menu > li > a[data-page="evidencias"]');
+                    if (parentEvidencias) parentEvidencias.classList.add('active');
+                } else if (el.dataset.page === page) {
+                    el.classList.add('active');
+                }
             });
 
             const content = document.getElementById('main-content');
+
+            // Evidencias - subpáginas
+            if (page === 'evidencias-melany') {
+                renderEvidencias(content, 'Melany');
+                return;
+            }
+            if (page === 'evidencias-agustin') {
+                renderEvidencias(content, 'Agustín');
+                return;
+            }
+            if (page === 'evidencias-zuiliani') {
+                renderEvidencias(content, 'Zuiliani');
+                return;
+            }
+
             switch(page) {
                 case 'inicio':
                     renderHome(content);
@@ -328,14 +395,8 @@
                 case 'servicios':
                     renderServices(content);
                     break;
-                case 'adopciones':
-                    renderAdoptions(content);
-                    break;
-                case 'rescates':
-                    renderRescues(content);
-                    break;
-                case 'voluntariado':
-                    renderVolunteer(content);
+                case 'evidencias':
+                    renderEvidenciasMain(content);
                     break;
                 case 'galeria':
                     renderGallery(content);
@@ -394,7 +455,7 @@
         }
 
         // ============================================================
-        // ACERCA DE - YA INTEGRADA
+        // ACERCA DE
         // ============================================================
         function renderAbout(container) {
             container.innerHTML = `
@@ -466,77 +527,207 @@
         }
 
         // ============================================================
-        // SERVICIOS - VERSIÓN FUNCIONAL (combina Adopciones, Rescates y Voluntariado)
+        // SERVICIOS - QUIZ INTERACTIVO
         // ============================================================
         function renderServices(container) {
             const availableDogs = dogs.filter(d => !d.adopted).length;
 
-            const services = [
+            const quizQuestions = [
                 {
-                    icon: '🏠',
-                    title: 'Adopciones',
-                    desc: `Encuentra a tu nuevo mejor amigo. Actualmente tenemos ${availableDogs} perros esperando un hogar.`,
-                    stat: `${availableDogs} disponibles`,
-                    color: '#27ae60',
-                    page: 'adopciones',
-                    cta: 'Ver perros en adopción'
+                    id: 1,
+                    pregunta: '¿Cuánto tiempo puedes dedicar a ayudar?',
+                    opciones: [
+                        { texto: '📅 Mucho tiempo, quiero un compromiso constante', valor: 'voluntariado' },
+                        { texto: '⏰ Algo de tiempo los fines de semana', valor: 'voluntariado' },
+                        { texto: '💻 Solo tiempo para difundir en redes', valor: 'voluntariado' },
+                        { texto: '🏠 Quiero darle un hogar a un perro', valor: 'adopcion' },
+                    ]
                 },
                 {
-                    icon: '🚑',
-                    title: 'Rescates',
-                    desc: 'Intervenimos en casos de maltrato y abandono. Conoce nuestros operativos más recientes.',
-                    stat: '3 rescates recientes',
-                    color: '#e74c3c',
-                    page: 'rescates',
-                    cta: 'Ver rescates recientes'
+                    id: 2,
+                    pregunta: '¿Qué es lo que más te motiva a ayudar?',
+                    opciones: [
+                        { texto: '❤️ Dar amor y compañía a un perro', valor: 'adopcion' },
+                        { texto: '🚑 Rescatar perros en situación de calle', valor: 'rescate' },
+                        { texto: '🧑‍🤝‍🧑 Ser parte de una comunidad solidaria', valor: 'voluntariado' },
+                        { texto: '📢 Concientizar sobre el maltrato animal', valor: 'voluntariado' },
+                    ]
                 },
                 {
-                    icon: '🧑\u200d🤝\u200d🧑',
-                    title: 'Voluntariado',
-                    desc: 'Suma tu tiempo y dedicación. Hay varias formas de ayudar, desde pasear perros hasta gestionar redes.',
-                    stat: '4 formas de ayudar',
-                    color: '#8e44ad',
-                    page: 'voluntariado',
-                    cta: 'Quiero ser voluntario'
-                },
+                    id: 3,
+                    pregunta: '¿Cuál de estas actividades te parece más valiosa?',
+                    opciones: [
+                        { texto: '🏠 Darle un hogar permanente a un perro', valor: 'adopcion' },
+                        { texto: '🚑 Participar en operativos de rescate', valor: 'rescate' },
+                        { texto: '📸 Tomar fotos para promover adopciones', valor: 'voluntariado' },
+                        { texto: '💰 Donar para cubrir gastos veterinarios', valor: 'voluntariado' },
+                    ]
+                }
             ];
+
+            let quizStep = 0;
+            let quizAnswers = [];
+            let quizResult = null;
+
+            function renderQuizStep() {
+                const quizContainer = document.getElementById('quiz-container');
+                if (!quizContainer) return;
+
+                if (quizStep < quizQuestions.length) {
+                    const q = quizQuestions[quizStep];
+                    quizContainer.innerHTML = `
+                        <div style="background:#fff;border-radius:16px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                                <span style="background:#e67e22;color:#fff;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:bold;">Pregunta ${quizStep + 1} de ${quizQuestions.length}</span>
+                                <span style="color:#7f8c8d;font-size:13px;">${Math.round((quizStep + 1) / quizQuestions.length * 100)}% completado</span>
+                            </div>
+                            <div style="background:#ecf0f1;border-radius:10px;height:6px;margin-bottom:20px;">
+                                <div style="background:linear-gradient(135deg,#e67e22,#f39c12);border-radius:10px;height:100%;width:${(quizStep + 1) / quizQuestions.length * 100}%;transition:width 0.5s;"></div>
+                            </div>
+                            <h3 style="color:#2c3e50;font-size:18px;margin-bottom:20px;">${q.pregunta}</h3>
+                            <div style="display:grid;grid-template-columns:1fr;gap:10px;">
+                                ${q.opciones.map((op, idx) => `
+                                    <button class="quiz-option" data-valor="${op.valor}" style="background:#f9f6f2;border:2px solid #ecf0f1;border-radius:12px;padding:14px 20px;text-align:left;font-size:15px;cursor:pointer;transition:all 0.3s ease;color:#2c3e50;font-weight:500;"
+                                        onmouseover="this.style.borderColor='#e67e22';this.style.background='#fdf6f0'"
+                                        onmouseout="this.style.borderColor='#ecf0f1';this.style.background='#f9f6f2'"
+                                        onclick="answerQuiz('${op.valor}')">
+                                        ${op.texto}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    showQuizResult();
+                }
+            }
+
+            window.answerQuiz = function(valor) {
+                quizAnswers.push(valor);
+                quizStep++;
+                if (quizStep < quizQuestions.length) {
+                    renderQuizStep();
+                } else {
+                    const counts = {};
+                    quizAnswers.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+                    let maxCount = 0;
+                    let maxValor = 'voluntariado';
+                    for (const [key, count] of Object.entries(counts)) {
+                        if (count > maxCount) {
+                            maxCount = count;
+                            maxValor = key;
+                        }
+                    }
+                    quizResult = maxValor;
+                    renderQuizStep();
+                }
+            };
+
+            function showQuizResult() {
+                const quizContainer = document.getElementById('quiz-container');
+                if (!quizContainer) return;
+
+                const results = {
+                    'adopcion': {
+                        icon: '🏠',
+                        title: '¡Eres un adoptante ideal!',
+                        desc: 'Tu perfil muestra que tienes el corazón y las condiciones para darle un hogar a un perro rescatado. Los perros en adopción te están esperando.',
+                        color: '#27ae60',
+                        cta: 'Ver perros en adopción',
+                        page: 'adopciones'
+                    },
+                    'rescate': {
+                        icon: '🚑',
+                        title: '¡Tienes alma de rescatista!',
+                        desc: 'Tu compromiso con el rescate animal es admirable. Puedes ayudar en operativos de rescate o reportar casos de maltrato.',
+                        color: '#e74c3c',
+                        cta: 'Ver rescates recientes',
+                        page: 'rescates'
+                    },
+                    'voluntariado': {
+                        icon: '🧑‍🤝‍🧑',
+                        title: '¡Eres un gran voluntario!',
+                        desc: 'Tu disposición a ayudar de múltiples formas es invaluable. Hay muchas maneras de ser voluntario y marcar la diferencia.',
+                        color: '#8e44ad',
+                        cta: 'Ver formas de voluntariado',
+                        page: 'voluntariado'
+                    }
+                };
+
+                const result = results[quizResult] || results['voluntariado'];
+
+                quizContainer.innerHTML = `
+                    <div style="background:#fff;border-radius:16px;padding:35px;box-shadow:0 4px 20px rgba(0,0,0,0.06);text-align:center;border-top:5px solid ${result.color};">
+                        <span style="font-size:56px;display:block;margin-bottom:10px;">${result.icon}</span>
+                        <h2 style="color:#2c3e50;margin-bottom:8px;">🎉 ${result.title}</h2>
+                        <p style="color:#7f8c8d;max-width:500px;margin:0 auto 20px;font-size:15px;line-height:1.6;">${result.desc}</p>
+                        <div style="background:#f9f6f2;border-radius:12px;padding:15px;margin:15px auto;max-width:400px;">
+                            <p style="color:#2c3e50;font-size:14px;margin:0;">
+                                <strong>📊 Tus respuestas:</strong> 
+                                ${quizAnswers.map(a => {
+                                    const labels = { 'adopcion': '🏠 Adoptar', 'rescate': '🚑 Rescatar', 'voluntariado': '🧑‍🤝‍🧑 Voluntariado' };
+                                    return labels[a] || a;
+                                }).join(' → ')}
+                            </p>
+                        </div>
+                        <button class="btn-donar" onclick="navigateTo('${result.page}')" style="background:${result.color};color:#fff;">${result.cta} →</button>
+                        <br><br>
+                        <button class="btn-donar" onclick="reiniciarQuiz()" style="background:#2c3e50;color:#fff;padding:8px 25px;font-size:13px;">🔄 Repetir quiz</button>
+                    </div>
+                `;
+            }
+
+            window.reiniciarQuiz = function() {
+                quizStep = 0;
+                quizAnswers = [];
+                quizResult = null;
+                renderQuizStep();
+            };
 
             container.innerHTML = `
                 <section class="hero" style="background:linear-gradient(135deg,#27ae60,#2ecc71);">
-                    <h1>🛠️ Nuestros Servicios</h1>
-                    <p>Estas son las formas en que trabajamos por los perros rescatados. Elige una opción para conocer más.</p>
+                    <h1>🧠 Descubre cómo puedes ayudar</h1>
+                    <p>Responde este quiz rápido y descubre cuál es la mejor forma de ayudar a los perros rescatados. ¡Solo 3 preguntas!</p>
+                    <span style="display:inline-block;background:rgba(255,255,255,0.2);padding:6px 20px;border-radius:30px;font-size:14px;">⏱️ Menos de 2 minutos</span>
                 </section>
 
-                <section style="margin-top:30px;">
-                    <h2 class="section-title">¿Cómo quieres ayudar hoy?</h2>
-                    <p class="section-subtitle">Cada servicio te lleva directo a la sección correspondiente.</p>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;margin-top:25px;">
-                        ${services.map(s => `
-                            <div style="background:#fff;border-radius:14px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border-top:5px solid ${s.color};cursor:pointer;transition:transform 0.2s;"
-                                 onclick="navigateTo('${s.page}')"
-                                 onmouseover="this.style.transform='translateY(-4px)'"
-                                 onmouseout="this.style.transform='translateY(0)'">
-                                <span style="font-size:42px;display:block;margin-bottom:12px;">${s.icon}</span>
-                                <h3 style="color:#2c3e50;margin-bottom:8px;">${s.title}</h3>
-                                <p style="color:#7f8c8d;font-size:14px;min-height:60px;">${s.desc}</p>
-                                <span style="display:inline-block;background:${s.color}1a;color:${s.color};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin:10px 0;">${s.stat}</span>
-                                <br>
-                                <button class="btn-donar" style="background:${s.color};color:#fff;margin-top:10px;width:100%;" onclick="event.stopPropagation(); navigateTo('${s.page}')">${s.cta} →</button>
-                            </div>
-                        `).join('')}
+                <section style="margin-top:25px;">
+                    <div id="quiz-container"></div>
+                </section>
+
+                <section style="margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+                    <div style="background:#fff;padding:20px;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+                        <span style="font-size:32px;">🏠</span>
+                        <h4 style="color:#2c3e50;margin:8px 0 4px;">Adopciones</h4>
+                        <p style="color:#7f8c8d;font-size:13px;">${availableDogs} perros disponibles</p>
+                        <button class="btn-donar" onclick="navigateTo('adopciones')" style="padding:6px 20px;font-size:12px;background:#27ae60;color:#fff;">Ver más</button>
+                    </div>
+                    <div style="background:#fff;padding:20px;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+                        <span style="font-size:32px;">🚑</span>
+                        <h4 style="color:#2c3e50;margin:8px 0 4px;">Rescates</h4>
+                        <p style="color:#7f8c8d;font-size:13px;">3 rescates recientes</p>
+                        <button class="btn-donar" onclick="navigateTo('rescates')" style="padding:6px 20px;font-size:12px;background:#e74c3c;color:#fff;">Ver más</button>
+                    </div>
+                    <div style="background:#fff;padding:20px;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+                        <span style="font-size:32px;">🧑‍🤝‍🧑</span>
+                        <h4 style="color:#2c3e50;margin:8px 0 4px;">Voluntariado</h4>
+                        <p style="color:#7f8c8d;font-size:13px;">4 formas de ayudar</p>
+                        <button class="btn-donar" onclick="navigateTo('voluntariado')" style="padding:6px 20px;font-size:12px;background:#8e44ad;color:#fff;">Ver más</button>
                     </div>
                 </section>
 
-                <section style="margin-top:40px;background:#fff;padding:40px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);text-align:center;">
-                    <h3 style="color:#2c3e50;margin-bottom:15px;">¿No sabes por dónde empezar?</h3>
-                    <p style="color:#7f8c8d;max-width:500px;margin:0 auto 20px;">Si quieres dar un hogar, revisa Adopciones. Si quieres reportar un caso, ve a Rescates. Si tienes tiempo libre, únete como Voluntario.</p>
+                <section style="margin-top:30px;background:#fff;padding:30px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);text-align:center;">
+                    <h3 style="color:#2c3e50;margin-bottom:10px;">💬 ¿Tienes dudas?</h3>
+                    <p style="color:#7f8c8d;max-width:450px;margin:0 auto 15px;">Si prefieres hablar con nosotros directamente, contáctanos y te ayudaremos a encontrar la mejor manera de ayudar.</p>
                     <button class="btn-donar" onclick="navigateTo('contacto')" style="background:#2c3e50;color:#fff;">📬 Contáctanos</button>
                 </section>
             `;
+
+            renderQuizStep();
         }
 
         // ============================================================
-        // ADOPCIONES - COMPLETA
+        // ADOPCIONES
         // ============================================================
         function renderAdoptions(container) {
             const availableDogs = dogs.filter(d => !d.adopted);
@@ -601,7 +792,7 @@
         }
 
         // ============================================================
-        // RESCATES - COMPLETA
+        // RESCATES
         // ============================================================
         function renderRescues(container) {
             container.innerHTML = `
@@ -630,7 +821,7 @@
         }
 
         // ============================================================
-        // VOLUNTARIADO - COMPLETA
+        // VOLUNTARIADO
         // ============================================================
         function renderVolunteer(container) {
             container.innerHTML = `
@@ -673,42 +864,348 @@
         }
 
         // ============================================================
-        // GALERÍA - VERSIÓN VACÍA
+        // EVIDENCIAS - Main
         // ============================================================
-        function renderGallery(container) {
+        function renderEvidenciasMain(container) {
+            const totalImages = Object.values(evidencias).reduce((sum, arr) => sum + arr.length, 0);
+
             container.innerHTML = `
-                <section class="gallery-section">
-                    <h2 class="section-title">📸 Galería</h2>
-                    <p class="section-subtitle" style="opacity:0.7;">Contenido en construcción. Pronto más imágenes.</p>
-                    
-                    <div style="background:#fff;padding:60px 40px;border-radius:16px;margin-top:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-                        <span style="font-size:64px;display:block;margin-bottom:20px;">🖼️</span>
-                        <h3 style="color:#2c3e50;margin-bottom:15px;">Galería en construcción</h3>
-                        <p style="color:#7f8c8d;max-width:500px;margin:0 auto;">Estamos seleccionando las mejores fotos de nuestros perros rescatados. Vuelve pronto para verlas.</p>
-                        
-                        <div class="gallery-filters" style="margin-top:25px;">
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">📷 Todos</button>
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">🐕 Rescates</button>
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">🏠 Adopciones</button>
-                            <button class="filter-btn" style="opacity:0.5;cursor:default;">🎉 Eventos</button>
-                        </div>
-                        
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:20px;">
-                            ${[1,2,3,4,5,6].map(i => `
-                                <div style="background:#ecf0f1;border-radius:12px;height:150px;display:flex;align-items:center;justify-content:center;color:#bdc3c7;font-size:14px;border:2px dashed #bdc3c7;">
-                                    📸 Imagen ${i}
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <button class="btn-donar" onclick="navigateTo('inicio')" style="margin-top:25px;background:#2c3e50;color:#fff;">Volver al inicio</button>
+                <section class="evidencias-section">
+                    <h2 style="text-align:center;color:#2c3e50;">📋 Evidencias</h2>
+                    <p style="text-align:center;color:#7f8c8d;font-size:14px;margin-bottom:20px;">
+                        Total de imágenes: <strong>${totalImages}</strong> · 
+                        Selecciona un estudiante para ver sus evidencias
+                    </p>
+
+                    <div class="evidencias-tabs">
+                        ${estudiantes.map(nombre => `
+                            <button class="tab-btn" onclick="navigateTo('evidencias-${nombre.toLowerCase()}')">
+                                📸 ${nombre}
+                                <span class="badge">${evidencias[nombre] ? evidencias[nombre].length : 0}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+                        <span style="font-size:48px;display:block;margin-bottom:15px;">👆</span>
+                        <h3 style="color:#2c3e50;">Selecciona un estudiante</h3>
+                        <p style="color:#7f8c8d;font-size:14px;">Haz clic en Melany, Agustín o Zuiliani para ver sus evidencias.</p>
                     </div>
                 </section>
             `;
         }
 
         // ============================================================
-        // CONTACTO - COMPLETA
+        // EVIDENCIAS - Por estudiante (CORREGIDO)
+        // ============================================================
+        function renderEvidencias(container, estudiante) {
+            const imagenes = evidencias[estudiante] || [];
+
+            // Actualizar clase activa en el menú para "Evidencias"
+            document.querySelectorAll('.menu > li > a[data-page]').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.page === 'evidencias') {
+                    el.classList.add('active');
+                }
+            });
+
+            container.innerHTML = `
+                <section class="evidencias-section">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:15px;">
+                        <h2 style="color:#2c3e50;margin:0;">📸 Evidencias - ${estudiante}</h2>
+                        <button class="btn-donar" onclick="navigateTo('evidencias')" style="padding:8px 20px;font-size:12px;background:#2c3e50;color:#fff;">← Volver</button>
+                    </div>
+                    <p style="color:#7f8c8d;font-size:14px;margin-bottom:20px;">
+                        ${imagenes.length} imagen${imagenes.length !== 1 ? 'es' : ''} subida${imagenes.length !== 1 ? 's' : ''}
+                    </p>
+
+                    <div class="upload-area" id="uploadArea-${estudiante}">
+                        <span class="upload-icon">📤</span>
+                        <h3>Subir imagen</h3>
+                        <p>Arrastra y suelta una imagen o haz clic para seleccionar</p>
+                        <label class="file-input-label" for="fileInput-${estudiante}">📁 Seleccionar imagen</label>
+                        <input type="file" id="fileInput-${estudiante}" accept="image/*">
+                    </div>
+
+                    <div class="evidencias-grid" id="grid-${estudiante}">
+                        ${imagenes.length === 0 ? `
+                            <div class="no-images" style="grid-column:1/-1;">
+                                <span class="icon">🖼️</span>
+                                <p><strong>No hay imágenes</strong></p>
+                                <p style="font-size:13px;">Sube la primera imagen de ${estudiante}</p>
+                            </div>
+                        ` : imagenes.map(img => `
+                            <div class="evidencia-card" data-id="${img.id}">
+                                <img src="${img.imagen}" alt="Evidencia de ${estudiante}">
+                                <div class="info">
+                                    <p class="nombre">📷 ${estudiante}</p>
+                                    <p class="fecha">📅 ${img.fecha}</p>
+                                </div>
+                                <span class="estudiante-tag">${estudiante}</span>
+                                <button class="delete-btn" onclick="eliminarEvidencia(${img.id}, '${estudiante}')" title="Eliminar">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+
+            // Configurar eventos de subida
+            const fileInput = document.getElementById(`fileInput-${estudiante}`);
+            const uploadArea = document.getElementById(`uploadArea-${estudiante}`);
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        subirImagen(this.files[0], estudiante);
+                        this.value = '';
+                    }
+                });
+            }
+
+            if (uploadArea) {
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        subirImagen(e.dataTransfer.files[0], estudiante);
+                    }
+                });
+
+                uploadArea.addEventListener('click', function(e) {
+                    if (e.target.tagName !== 'LABEL' && e.target.tagName !== 'INPUT') {
+                        const input = document.getElementById(`fileInput-${estudiante}`);
+                        if (input) input.click();
+                    }
+                });
+            }
+        }
+
+        // ============================================================
+        // EVIDENCIAS - Funciones de subida y eliminación
+        // ============================================================
+        function subirImagen(file, estudiante) {
+            if (!file.type.startsWith('image/')) {
+                showNotification('error', '⚠️ Por favor, selecciona una imagen válida');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('error', '⚠️ La imagen no puede superar los 5MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+
+                if (!evidencias[estudiante]) {
+                    evidencias[estudiante] = [];
+                }
+
+                const newImage = {
+                    id: ++evidenciaIdCounter,
+                    nombre: estudiante,
+                    imagen: imageData,
+                    fecha: new Date().toISOString().split('T')[0]
+                };
+
+                evidencias[estudiante].push(newImage);
+                saveEvidencias();
+
+                showNotification('success', `✅ ¡Imagen subida correctamente para ${estudiante}!`);
+                renderEvidencias(document.getElementById('main-content'), estudiante);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function eliminarEvidencia(id, estudiante) {
+            if (!confirm(`¿Estás seguro de eliminar esta imagen de ${estudiante}?`)) return;
+
+            if (evidencias[estudiante]) {
+                evidencias[estudiante] = evidencias[estudiante].filter(img => img.id !== id);
+                saveEvidencias();
+                showNotification('info', `🗑️ Imagen eliminada de ${estudiante}`);
+                renderEvidencias(document.getElementById('main-content'), estudiante);
+            }
+        }
+
+        // ============================================================
+        // GALERÍA - CON IMÁGENES REALES
+        // ============================================================
+        function renderGallery(container) {
+            // Imágenes de perros para la galería
+            const galleryImages = [
+                { id: 1, src: 'https://place.dog/400/300?id=20', title: '🐕 Bruno jugando en el parque', category: 'adopcion' },
+                { id: 2, src: 'https://place.dog/400/300?id=21', title: '🐕 Luna disfrutando del sol', category: 'adopcion' },
+                { id: 3, src: 'https://place.dog/400/300?id=22', title: '🐕 Max en su nuevo hogar', category: 'adopcion' },
+                { id: 4, src: 'https://place.dog/400/300?id=23', title: '🐕 Coco con su nueva familia', category: 'adopcion' },
+                { id: 5, src: 'https://place.dog/400/300?id=24', title: '🚑 Rescate en zona rural', category: 'rescate' },
+                { id: 6, src: 'https://place.dog/400/300?id=25', title: '🚑 Operativo de rescate', category: 'rescate' },
+                { id: 7, src: 'https://place.dog/400/300?id=26', title: '🚑 Rescate de cachorros', category: 'rescate' },
+                { id: 8, src: 'https://place.dog/400/300?id=27', title: '🎉 Feria de adopción 2025', category: 'evento' },
+                { id: 9, src: 'https://place.dog/400/300?id=28', title: '🎉 Jornada de adopción', category: 'evento' },
+                { id: 10, src: 'https://place.dog/400/300?id=29', title: '🎉 Voluntarios en acción', category: 'evento' },
+                { id: 11, src: 'https://place.dog/400/300?id=30', title: '🐕 Nala en su hogar feliz', category: 'adopcion' },
+                { id: 12, src: 'https://place.dog/400/300?id=31', title: '🐕 Rocky descansando', category: 'adopcion' },
+            ];
+
+            // Estado para el filtro actual
+            let currentFilter = 'todos';
+
+            // Función para renderizar las imágenes según el filtro
+            function renderImages(filter) {
+                const grid = document.getElementById('gallery-grid');
+                if (!grid) return;
+
+                const filtered = filter === 'todos' 
+                    ? galleryImages 
+                    : galleryImages.filter(img => img.category === filter);
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#7f8c8d;">
+                            <span style="font-size:48px;display:block;margin-bottom:10px;">🔍</span>
+                            <p style="font-size:16px;">No hay imágenes en esta categoría</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = filtered.map(img => `
+                    <div class="gallery-item" data-category="${img.category}" data-title="${img.title}" onclick="openLightbox('${img.src}', '${img.title}')">
+                        <img src="${img.src}" alt="${img.title}" loading="lazy">
+                        <div class="overlay">${img.title}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Función para abrir el lightbox
+            window.openLightbox = function(src, title) {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.92);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    cursor: pointer;
+                    padding: 20px;
+                `;
+
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    max-width: 80%;
+                    max-height: 80%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    animation: fadeIn 0.4s ease;
+                `;
+
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = title;
+                img.style.cssText = `
+                    max-width: 100%;
+                    max-height: 70vh;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+                    object-fit: contain;
+                `;
+
+                const caption = document.createElement('p');
+                caption.textContent = title;
+                caption.style.cssText = `
+                    color: #fff;
+                    font-size: 18px;
+                    margin-top: 15px;
+                    text-align: center;
+                    font-weight: 500;
+                `;
+
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = '✕';
+                closeBtn.style.cssText = `
+                    position: absolute;
+                    top: 20px;
+                    right: 30px;
+                    background: none;
+                    border: none;
+                    color: #fff;
+                    font-size: 32px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    z-index: 10001;
+                `;
+                closeBtn.onmouseover = () => closeBtn.style.transform = 'rotate(90deg)';
+                closeBtn.onmouseout = () => closeBtn.style.transform = 'rotate(0deg)';
+                closeBtn.onclick = () => overlay.remove();
+
+                container.appendChild(img);
+                container.appendChild(caption);
+                overlay.appendChild(closeBtn);
+                overlay.appendChild(container);
+
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) this.remove();
+                });
+
+                document.body.appendChild(overlay);
+            };
+
+            container.innerHTML = `
+                <section class="gallery-section">
+                    <h2 class="section-title">📸 Galería de Nuestros Perros</h2>
+                    <p class="section-subtitle">Momentos felices de nuestros perros rescatados en Costa Rica</p>
+
+                    <div class="gallery-filters">
+                        <button class="filter-btn active" data-filter="todos" onclick="filterGallery('todos')">📷 Todos</button>
+                        <button class="filter-btn" data-filter="adopcion" onclick="filterGallery('adopcion')">🏠 Adopciones</button>
+                        <button class="filter-btn" data-filter="rescate" onclick="filterGallery('rescate')">🚑 Rescates</button>
+                        <button class="filter-btn" data-filter="evento" onclick="filterGallery('evento')">🎉 Eventos</button>
+                    </div>
+
+                    <div class="gallery-grid" id="gallery-grid">
+                        <!-- Las imágenes se cargan con JavaScript -->
+                    </div>
+
+                    <div style="text-align:center;margin-top:25px;color:#7f8c8d;font-size:13px;">
+                        💡 Haz clic en cualquier imagen para verla en tamaño completo
+                    </div>
+                </section>
+            `;
+
+            // Función global para filtrar
+            window.filterGallery = function(filter) {
+                currentFilter = filter;
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filter === filter);
+                });
+                renderImages(filter);
+            };
+
+            // Renderizar imágenes iniciales
+            renderImages('todos');
+        }
+
+        // ============================================================
+        // CONTACTO
         // ============================================================
         function renderContact(container) {
             container.innerHTML = `
@@ -816,13 +1313,15 @@
         }
 
         // ============================================================
-        // NAVEGACIÓN POR MENÚ
+        // NAVEGACIÓN POR MENÚ (CORREGIDA)
         // ============================================================
 
+        // Navegación para las opciones principales del menú
         document.querySelectorAll('.menu > li > a[data-page]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const page = this.dataset.page;
+                console.log('Menú clic:', page);
                 navigateTo(page);
                 if (window.innerWidth <= 768) {
                     document.querySelectorAll('.menu li > ul').forEach(ul => ul.style.display = 'none');
@@ -830,6 +1329,21 @@
             });
         });
 
+        // Navegación para las subopciones de evidencias (Melany, Agustín, Zuiliani)
+        document.querySelectorAll('.menu li > ul li a[data-page]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const page = this.dataset.page;
+                console.log('Submenú clic:', page);
+                navigateTo(page);
+                if (window.innerWidth <= 768) {
+                    document.querySelectorAll('.menu li > ul').forEach(ul => ul.style.display = 'none');
+                }
+            });
+        });
+
+        // Manejo de submenús en móvil
         document.querySelectorAll('.menu > li').forEach(li => {
             const link = li.querySelector('a[data-page]');
             const submenu = li.querySelector('ul');
@@ -855,6 +1369,7 @@
         }, 500);
 
         console.log('🐾 Patitas Felices cargado exitosamente');
+        console.log('📋 Evidencias cargadas:', evidencias);
     </script>
 </body>
 </html>
