@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <!-- MENÚ DE NAVEGACIÓN ACTUALIZADO CON EVIDENCIAS -->
+    <!-- MENÚ DE NAVEGACIÓN -->
     <ul class="menu">
         <li class="logo-item"><a href="#">🐾 <span>Patitas</span>Felices</a></li>
         <li><a href="#" data-page="inicio" class="active">Inicio</a></li>
@@ -101,9 +101,7 @@
     </ul>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div id="main-content">
-        <!-- El contenido se carga dinámicamente con JavaScript -->
-    </div>
+    <div id="main-content"></div>
 
     <!-- PIE DE PÁGINA -->
     <footer class="footer">
@@ -130,40 +128,85 @@
         let adoptionIdCounter = 1;
 
         // ============================================================
-        // EVIDENCIAS - Datos
+        // EVIDENCIAS - Datos con imágenes del servidor
         // ============================================================
         const estudiantes = ['Melany', 'Agustín', 'Zuiliani'];
 
+        // Lista de imágenes por estudiante (desde tu servidor)
+        const imagenesPorEstudiante = {
+            'Melany': [
+                'banderas.png',
+                'ejercicio 1.png',
+                'Ejercicio 3.png',
+                'Ejercicio2.png',
+                'quiz formativo.png',
+                'quiz1.png'
+            ],
+            'Agustín': [
+                'banderas6.png',
+                'captura ejercicios.png',
+                'ejercicios 1sitios.png',
+                'ejercicios2.png',
+                'qizz 2.png',
+                'quizz css.png'
+            ],
+            'Zuiliani': [
+                'BANDERAS.png',
+                'EJERCICIO1.png',
+                'EJERCICIO2.png',
+                'EJERCICIO3.png',
+                'QUIZ1.png'
+            ]
+        };
+
         function loadEvidencias() {
+            // Primero intentar cargar desde localStorage (imágenes subidas por el usuario)
             const saved = localStorage.getItem('evidencias');
             if (saved) {
                 try {
-                    return JSON.parse(saved);
+                    const data = JSON.parse(saved);
+                    if (data && typeof data === 'object') {
+                        return data;
+                    }
                 } catch (e) {
-                    return {};
+                    console.warn('Error al cargar evidencias desde localStorage:', e);
                 }
             }
-            const initialData = {
-                'Melany': [
-                    { id: 1, nombre: 'Melany', imagen: 'https://place.dog/300/200?id=10', fecha: '2026-06-28' },
-                    { id: 2, nombre: 'Melany', imagen: 'https://place.dog/300/200?id=11', fecha: '2026-06-29' }
-                ],
-                'Agustín': [
-                    { id: 3, nombre: 'Agustín', imagen: 'https://place.dog/300/200?id=12', fecha: '2026-06-28' }
-                ],
-                'Zuiliani': [
-                    { id: 4, nombre: 'Zuiliani', imagen: 'https://place.dog/300/200?id=13', fecha: '2026-06-27' }
-                ]
-            };
+
+            // Si no hay localStorage, usar imágenes del servidor
+            const initialData = {};
+            
+            for (const [estudiante, archivos] of Object.entries(imagenesPorEstudiante)) {
+                initialData[estudiante] = archivos.map((archivo, index) => ({
+                    id: index + 1,
+                    nombre: estudiante,
+                    imagen: `img/${estudiante}/${archivo}`,
+                    fecha: '2026-06-30'
+                }));
+            }
+
+            // Guardar en localStorage para persistencia
             localStorage.setItem('evidencias', JSON.stringify(initialData));
             return initialData;
         }
 
         let evidencias = loadEvidencias();
-        let evidenciaIdCounter = 4;
+        let evidenciaIdCounter = 100;
 
         function saveEvidencias() {
             localStorage.setItem('evidencias', JSON.stringify(evidencias));
+            actualizarContadoresEvidencias();
+        }
+
+        function actualizarContadoresEvidencias() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const nombre = btn.textContent.trim().replace('📸 ', '').split(' ')[0];
+                const count = evidencias[nombre] ? evidencias[nombre].length : 0;
+                const badge = btn.querySelector('.badge');
+                if (badge) {
+                    badge.textContent = count;
+                }
+            });
         }
 
         // ============================================================
@@ -351,16 +394,14 @@
         }
 
         // ============================================================
-        // NAVEGACIÓN SPA (CORREGIDA)
+        // NAVEGACIÓN SPA
         // ============================================================
 
         function navigateTo(page) {
             console.log('Navegando a:', page);
 
-            // Actualizar clase activa en el menú
             document.querySelectorAll('.menu > li > a[data-page]').forEach(el => {
                 el.classList.remove('active');
-                // Si la página es una subpágina de evidencias, activar "Evidencias"
                 if (page.startsWith('evidencias-')) {
                     const parentEvidencias = document.querySelector('.menu > li > a[data-page="evidencias"]');
                     if (parentEvidencias) parentEvidencias.classList.add('active');
@@ -371,7 +412,6 @@
 
             const content = document.getElementById('main-content');
 
-            // Evidencias - subpáginas
             if (page === 'evidencias-melany') {
                 renderEvidencias(content, 'Melany');
                 return;
@@ -386,26 +426,13 @@
             }
 
             switch(page) {
-                case 'inicio':
-                    renderHome(content);
-                    break;
-                case 'acerca':
-                    renderAbout(content);
-                    break;
-                case 'servicios':
-                    renderServices(content);
-                    break;
-                case 'evidencias':
-                    renderEvidenciasMain(content);
-                    break;
-                case 'galeria':
-                    renderGallery(content);
-                    break;
-                case 'contacto':
-                    renderContact(content);
-                    break;
-                default:
-                    renderHome(content);
+                case 'inicio': renderHome(content); break;
+                case 'acerca': renderAbout(content); break;
+                case 'servicios': renderServices(content); break;
+                case 'evidencias': renderEvidenciasMain(content); break;
+                case 'galeria': renderGallery(content); break;
+                case 'contacto': renderContact(content); break;
+                default: renderHome(content);
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -867,7 +894,11 @@
         // EVIDENCIAS - Main
         // ============================================================
         function renderEvidenciasMain(container) {
-            const totalImages = Object.values(evidencias).reduce((sum, arr) => sum + arr.length, 0);
+            if (!evidencias || typeof evidencias !== 'object') {
+                evidencias = loadEvidencias();
+            }
+
+            const totalImages = Object.values(evidencias).reduce((sum, arr) => sum + (arr ? arr.length : 0), 0);
 
             container.innerHTML = `
                 <section class="evidencias-section">
@@ -896,12 +927,16 @@
         }
 
         // ============================================================
-        // EVIDENCIAS - Por estudiante (CORREGIDO)
+        // EVIDENCIAS - Por estudiante (CON IMÁGENES DEL SERVIDOR)
         // ============================================================
         function renderEvidencias(container, estudiante) {
+            if (!evidencias[estudiante]) {
+                evidencias[estudiante] = [];
+                saveEvidencias();
+            }
+
             const imagenes = evidencias[estudiante] || [];
 
-            // Actualizar clase activa en el menú para "Evidencias"
             document.querySelectorAll('.menu > li > a[data-page]').forEach(el => {
                 el.classList.remove('active');
                 if (el.dataset.page === 'evidencias') {
@@ -936,7 +971,8 @@
                             </div>
                         ` : imagenes.map(img => `
                             <div class="evidencia-card" data-id="${img.id}">
-                                <img src="${img.imagen}" alt="Evidencia de ${estudiante}">
+                                <img src="${img.imagen}" alt="Evidencia de ${estudiante}" 
+                                     onerror="this.src='https://place.dog/300/200?id=${Math.floor(Math.random() * 50)}'">
                                 <div class="info">
                                     <p class="nombre">📷 ${estudiante}</p>
                                     <p class="fecha">📅 ${img.fecha}</p>
@@ -1041,10 +1077,9 @@
         }
 
         // ============================================================
-        // GALERÍA - CON IMÁGENES REALES
+        // GALERÍA
         // ============================================================
         function renderGallery(container) {
-            // Imágenes de perros para la galería
             const galleryImages = [
                 { id: 1, src: 'https://place.dog/400/300?id=20', title: '🐕 Bruno jugando en el parque', category: 'adopcion' },
                 { id: 2, src: 'https://place.dog/400/300?id=21', title: '🐕 Luna disfrutando del sol', category: 'adopcion' },
@@ -1060,10 +1095,8 @@
                 { id: 12, src: 'https://place.dog/400/300?id=31', title: '🐕 Rocky descansando', category: 'adopcion' },
             ];
 
-            // Estado para el filtro actual
             let currentFilter = 'todos';
 
-            // Función para renderizar las imágenes según el filtro
             function renderImages(filter) {
                 const grid = document.getElementById('gallery-grid');
                 if (!grid) return;
@@ -1090,7 +1123,6 @@
                 `).join('');
             }
 
-            // Función para abrir el lightbox
             window.openLightbox = function(src, title) {
                 const overlay = document.createElement('div');
                 overlay.style.cssText = `
@@ -1115,7 +1147,6 @@
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    animation: fadeIn 0.4s ease;
                 `;
 
                 const img = document.createElement('img');
@@ -1181,9 +1212,7 @@
                         <button class="filter-btn" data-filter="evento" onclick="filterGallery('evento')">🎉 Eventos</button>
                     </div>
 
-                    <div class="gallery-grid" id="gallery-grid">
-                        <!-- Las imágenes se cargan con JavaScript -->
-                    </div>
+                    <div class="gallery-grid" id="gallery-grid"></div>
 
                     <div style="text-align:center;margin-top:25px;color:#7f8c8d;font-size:13px;">
                         💡 Haz clic en cualquier imagen para verla en tamaño completo
@@ -1191,7 +1220,6 @@
                 </section>
             `;
 
-            // Función global para filtrar
             window.filterGallery = function(filter) {
                 currentFilter = filter;
                 document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1200,7 +1228,6 @@
                 renderImages(filter);
             };
 
-            // Renderizar imágenes iniciales
             renderImages('todos');
         }
 
@@ -1313,15 +1340,13 @@
         }
 
         // ============================================================
-        // NAVEGACIÓN POR MENÚ (CORREGIDA)
+        // NAVEGACIÓN POR MENÚ
         // ============================================================
 
-        // Navegación para las opciones principales del menú
         document.querySelectorAll('.menu > li > a[data-page]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const page = this.dataset.page;
-                console.log('Menú clic:', page);
                 navigateTo(page);
                 if (window.innerWidth <= 768) {
                     document.querySelectorAll('.menu li > ul').forEach(ul => ul.style.display = 'none');
@@ -1329,13 +1354,11 @@
             });
         });
 
-        // Navegación para las subopciones de evidencias (Melany, Agustín, Zuiliani)
         document.querySelectorAll('.menu li > ul li a[data-page]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 const page = this.dataset.page;
-                console.log('Submenú clic:', page);
                 navigateTo(page);
                 if (window.innerWidth <= 768) {
                     document.querySelectorAll('.menu li > ul').forEach(ul => ul.style.display = 'none');
@@ -1343,7 +1366,6 @@
             });
         });
 
-        // Manejo de submenús en móvil
         document.querySelectorAll('.menu > li').forEach(li => {
             const link = li.querySelector('a[data-page]');
             const submenu = li.querySelector('ul');
