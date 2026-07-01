@@ -89,8 +89,8 @@
         <li><a href="#" data-page="evidencias">Evidencias</a>
             <ul>
                 <li><a href="#" data-page="evidencias-melany" onclick="event.preventDefault(); navigateTo('evidencias-melany');">Melany</a></li>
-                <li><a href="#" data-page="evidencias-agustin" onclick="event.preventDefault(); navigateTo('evidencias-agustin');">Agustín</a></li>
-                <li><a href="#" data-page="evidencias-zuiliani" onclick="event.preventDefault(); navigateTo('evidencias-zuiliani');">Zuiliani</a></li>
+                <li><a href="#" data-page="evidencias-agustin" onclick="event.preventDefault(); navigateTo('evidencias-agustin');">Agustin</a></li>
+                <li><a href="#" data-page="evidencias-ziuliani" onclick="event.preventDefault(); navigateTo('evidencias-ziuliani');">Ziuliani</a></li>
             </ul>
         </li>
         <li><a href="#" data-page="galeria">Galería</a></li>
@@ -128,11 +128,11 @@
         let adoptionIdCounter = 1;
 
         // ============================================================
-        // EVIDENCIAS - Datos con imágenes del servidor
+        // EVIDENCIAS - Datos con imágenes del servidor (CORREGIDO)
         // ============================================================
-        const estudiantes = ['Melany', 'Agustín', 'Zuiliani'];
+        
+        const estudiantes = ['Melany', 'Agustin', 'Ziuliani'];
 
-        // Lista de imágenes por estudiante (desde tu servidor)
         const imagenesPorEstudiante = {
             'Melany': [
                 'banderas.png',
@@ -142,15 +142,15 @@
                 'quiz formativo.png',
                 'quiz1.png'
             ],
-            'Agustín': [
+            'Agustin': [
                 'banderas6.png',
-                'captura ejercicios.png',
-                'ejercicios 1sitios.png',
+                'captura_ejercicios.png',
+                'ejercicios1.png',
                 'ejercicios2.png',
-                'qizz 2.png',
-                'quizz css.png'
+                'qizz2.png',
+                'quizzcss.png'
             ],
-            'Zuiliani': [
+            'Ziuliani': [
                 'BANDERAS.png',
                 'EJERCICIO1.png',
                 'EJERCICIO2.png',
@@ -160,12 +160,11 @@
         };
 
         function loadEvidencias() {
-            // Primero intentar cargar desde localStorage (imágenes subidas por el usuario)
             const saved = localStorage.getItem('evidencias');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-                    if (data && typeof data === 'object') {
+                    if (data && typeof data === 'object' && Object.keys(data).length > 0) {
                         return data;
                     }
                 } catch (e) {
@@ -173,19 +172,16 @@
                 }
             }
 
-            // Si no hay localStorage, usar imágenes del servidor
             const initialData = {};
-            
             for (const [estudiante, archivos] of Object.entries(imagenesPorEstudiante)) {
                 initialData[estudiante] = archivos.map((archivo, index) => ({
                     id: index + 1,
                     nombre: estudiante,
-                    imagen: `img/${estudiante}/${archivo}`,
+                    imagen: `img/${estudiante}/${encodeURIComponent(archivo)}`,
                     fecha: '2026-06-30'
                 }));
             }
 
-            // Guardar en localStorage para persistencia
             localStorage.setItem('evidencias', JSON.stringify(initialData));
             return initialData;
         }
@@ -394,7 +390,7 @@
         }
 
         // ============================================================
-        // NAVEGACIÓN SPA
+        // NAVEGACIÓN SPA (COMPLETAMENTE CORREGIDA)
         // ============================================================
 
         function navigateTo(page) {
@@ -417,11 +413,11 @@
                 return;
             }
             if (page === 'evidencias-agustin') {
-                renderEvidencias(content, 'Agustín');
+                renderEvidencias(content, 'Agustin');
                 return;
             }
-            if (page === 'evidencias-zuiliani') {
-                renderEvidencias(content, 'Zuiliani');
+            if (page === 'evidencias-ziuliani') {
+                renderEvidencias(content, 'Ziuliani');
                 return;
             }
 
@@ -920,14 +916,14 @@
                     <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
                         <span style="font-size:48px;display:block;margin-bottom:15px;">👆</span>
                         <h3 style="color:#2c3e50;">Selecciona un estudiante</h3>
-                        <p style="color:#7f8c8d;font-size:14px;">Haz clic en Melany, Agustín o Zuiliani para ver sus evidencias.</p>
+                        <p style="color:#7f8c8d;font-size:14px;">Haz clic en Melany, Agustin o Ziuliani para ver sus evidencias.</p>
                     </div>
                 </section>
             `;
         }
 
         // ============================================================
-        // EVIDENCIAS - Por estudiante (CON IMÁGENES DEL SERVIDOR)
+        // EVIDENCIAS - Por estudiante
         // ============================================================
         function renderEvidencias(container, estudiante) {
             if (!evidencias[estudiante]) {
@@ -985,7 +981,6 @@
                 </section>
             `;
 
-            // Configurar eventos de subida
             const fileInput = document.getElementById(`fileInput-${estudiante}`);
             const uploadArea = document.getElementById(`uploadArea-${estudiante}`);
 
